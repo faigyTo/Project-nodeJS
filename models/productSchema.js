@@ -12,7 +12,8 @@ const productSchema=mongoose.Schema({
     description:descriptionSchema,
     createDate:{type:Date,default:Date.now()},
     price:Number,
-    imagePath:String
+    imagePath:String,
+    categury:String
 })
 
 export const validatorProduct=(product)=>{
@@ -21,7 +22,8 @@ export const validatorProduct=(product)=>{
         productName:Joi.string().min(6).max(20).required(),
         description:Joi.object().required(),
         createDate:Joi.date().less('now'),
-        imagePath:Joi.string()
+        imagePath:Joi.string(),
+        categury:Joi.string().valid('אדום','לבן','רוז')
     })
 
     return schema.validate(product);

@@ -14,7 +14,7 @@ import { errorHandling } from './middleware/errorHandlingMiddleware.js';
 config();
 
 const app=express();
-app.use(cors({origin:'http://localhost:4000'}));
+app.use(cors({origin:'http://localhost:3000'}));
 connectToDB();
 app.use(express.json());
 app.use('/api/products',productRouter);

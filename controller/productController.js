@@ -2,16 +2,16 @@ import mongoose from "mongoose";
 import { ProductModel, validatorDescriptionProduct, validatorProduct, validatorProductForUpdate } from "../models/productSchema.js";
 
 const getAllProducts = async (req, res) => {
-    let { searchProductName, searchPrice} = req.query;
+    let { searchProductName, searchCategury} = req.query;
     let perPage = req.query.perPage || 15;
     let page = req.query.page || 1;
     let expName = new RegExp(`${searchProductName}`);
     try {
-        let filter = {};
+        let filter = {};//{productName:""}
         if (searchProductName)
             filter.productName = expName;
-        if (searchPrice)
-            filter.price=searchPrice;
+        if (searchCategury)
+            filter.categury=searchCategury;//{description:{color}}
         let allProducts = await ProductModel.find(filter).
             skip(perPage * (page - 1)).limit(perPage);
         res.json(allProducts);
@@ -37,6 +37,29 @@ const getProductById = async (req, res) => {
     }
 }
 
+const getCountProduct=async(req,res)=>{
+    try{
+        let products=await ProductModel.find({});
+        let count=products.length;
+        return res.json({count});
+    }
+    catch(err){
+        res.status(400).json({ type: 'get error', message: 'cannot get count all products' });
+    }
+}
+
+const getCountProductByCategury=async(req,res)=>{
+    try{
+        let {categury}=req.query;
+        let products=await ProductModel.find({categury});
+        let count=products.length;
+        return res.json({count});
+    }
+    catch(err){
+        res.status(400).json({ type: 'get error', message: 'cannot get count all products' });
+    }
+}
+
 const addProducts = async (req, res) => {
     let validate = validatorProduct(req.body);
     if (validate.error)
@@ -52,12 +75,12 @@ const addProducts = async (req, res) => {
         let sameProd = await ProductModel.findOne({ productName });
         if (sameProd)
             return res.status(409).json({ type: 'same product', message: 'there is aproduct with same details' });
-        let newProd = await ProductModel.create({ productName, createDate, description, price, imagePath });
+        let {color}=description
+        let newProd = await ProductModel.create({ productName, createDate, description, price, imagePath,categury:color });
         res.json(newProd);
     }
     catch (err) {
         res.status(400).json({ type: 'post error', message: 'cannot add product' });
-
     }
 }
 
@@ -97,4 +120,4 @@ const updateProduct = async (req, res) => {
     }
 }
 
-export { getAllProducts, getProductById, addProducts, deleteProducts,updateProduct }
+export { getAllProducts, getProductById, addProducts, deleteProducts,updateProduct,getCountProduct ,getCountProductByCategury}

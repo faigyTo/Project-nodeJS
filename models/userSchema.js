@@ -14,7 +14,7 @@ export const validatorUser=(user)=>{
         userEmail:Joi.string().email().required(),
         userName:Joi.string().min(3).max(10).required(),
         userPassword:Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{4,8}$')).required(),
-        // role:Joi.string().valid('USER','ADMIN'),
+        role:Joi.string().valid('USER','ADMIN'),
         websiteRegistrationDate:Joi.date().less('now')
     })
 

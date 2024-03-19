@@ -16,8 +16,9 @@ const addUser=async(req,res)=>{
             return res.status(409).json({type:'same user',message:'there is user with same details'});
         let hashCode=await hash(userPassword,10);
         let newUser=await UserModel.create({userEmail,userName,userPassword:hashCode,role,websiteRegistrationDate});
+        let {_id}=newUser;
         let token=generateToken(newUser);
-        res.json({token,userName,userEmail,role});
+        res.json({token,_id,userName,userEmail,role});
     }
     catch(err){
         res.status(400).json({ type: 'post error', message: 'cannot add user' });
@@ -31,11 +32,12 @@ const login=async(req,res)=>{
     let {userEmail,userPassword}=req.body;
     try{
         let user=await UserModel.findOne({userEmail});
+        let {userName,role,_id}=user;
         let isOk=await compare(userPassword,user.userPassword)
         if (!user || !isOk)
             return res.status(404).json({type:'no such user',message:'please sign up'});
         let token=generateToken(user);
-        res.json({token});
+        res.json({token,_id,userName,userEmail,role});
     }
     catch(err){
         res.status(400).json({ type: 'login error', message: 'cannot find user' });
